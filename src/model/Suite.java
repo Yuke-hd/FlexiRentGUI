@@ -4,7 +4,7 @@ class Suite extends Property {
 	DateTime _mntDate;
 
 	public Suite(String propId, String streetNum, String streetName, String suburb) {
-		super(propId, streetNum, streetName, suburb, 3, false, false);
+		super(propId, streetNum, streetName, suburb, 3, false, false,"/");
 
 	}
 

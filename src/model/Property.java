@@ -8,21 +8,26 @@ public abstract class Property {
 	private int _bedNum;
 	private boolean _isApt = false;
 	private boolean _isRented = false;
+	private String _imgPath;
 	// LinkedList<Record> propRecord = new LinkedList<Record>();
 	Record[] propRecord = new Record[10];
 
 	public Property(String propId, String streetNum, String streetName, String suburb, int bedNum, boolean isApt,
-			boolean isRented) {
+			boolean isRented, String imgPath) {
 		_propId = propId;
 		_streetNum = streetNum;
 		_streetName = streetName;
 		_suburb = suburb;
 		_bedNum = bedNum;
 		_isApt = isApt;
-		_isRented = false;
+		_isRented = false;_imgPath = imgPath;
 
 	}
 
+	public String getImgPath() {
+		return _imgPath;
+	}
+	
 	public boolean getType() {
 		return _isApt;
 	}

@@ -2,8 +2,8 @@ package model;
 
 public class Apartment extends Property{
 
-	public Apartment(String propId, String streetNum, String streetName, String suburb, int bedNum) {
-		super(propId, streetNum, streetName, suburb, bedNum, true, false);
+	public Apartment(String propId, String streetNum, String streetName, String suburb, int bedNum,String imgpath) {
+		super(propId, streetNum, streetName, suburb, bedNum, true, false, imgpath);
 		// TODO Auto-generated constructor stub
 		
 	}

@@ -86,7 +86,7 @@ public class FlexiRentSystem {
 					continue;
 				}
 			} while (bedNum>3||bedNum<1);
-			Apartment apt = new Apartment(propId, streetNum, streetName, suburb, bedNum);
+			Apartment apt = new Apartment(propId, streetNum, streetName, suburb, bedNum,"/");
 			propList.add(apt);
 		} else if (propId.startsWith("S_")){
 			Suite suite = new Suite(propId, streetNum, streetName, suburb);

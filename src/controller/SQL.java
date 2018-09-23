@@ -5,17 +5,20 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import model.Apartment;
 
 public class SQL {
-	static String driver = "org.hsqldb.jdbc.JDBCDriver";
-	static String dbPath = "jdbc:hsqldb:file:/database/RENTAL_PROPERTY";
-
-	public static void ViewData() {
+	final static String driver = "org.hsqldb.jdbc.JDBCDriver";
+	final static String dbPath = "jdbc:hsqldb:file:database/RENTAL_PROPERTY";
+	//final static String dbPath = "jdbc:hsqldb:file:/database/RENTAL_PROPERTY";
+	
+	public static ArrayList<String> ViewData() {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet result = null;
+		ArrayList<String> s1 = new ArrayList<>();
 
 		try {
 			Class.forName(driver);
@@ -24,12 +27,14 @@ public class SQL {
 			result = stmt.executeQuery("SELECT * FROM PROPERTY");
 
 			while (result.next()) {
-				System.out.println(result.getString("id"));
+				System.out.println(result.getString("imgpath"));
+				s1.add(result.getString(8));
+				s1.add(result.getString(1)+" "+result.getString(2)+" "+result.getString(3)+" "+result.getString(4));
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 		}
-
+		return s1;
 	}
 
 	public static void addProperty() {
@@ -39,7 +44,8 @@ public class SQL {
 	public static void insertData(Apartment prop) {
 		Connection con = null;
 		//Statement pstmt = null;
-		String sql = "INSERT INTO Property (id, snumber, sname, suburb, bednum) " + " Values (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO Property (id, snum, sname, suburb, bednum, isapt, isrented, imgpath) " + 
+		" Values (?, ?, ?, ?, ?,?,?,?)";
 		Statement stmt = null;
 		int result = 0;
 		String id = prop.getPropId();
@@ -47,6 +53,8 @@ public class SQL {
 		String sname = prop.getStreetName();
 		String suburb = prop.getSuburb();
 		int bednum = prop.getBedNum();
+		boolean isapt = prop.getType();
+		String imgpath = prop.getImgPath();
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(dbPath, "SA", "");
@@ -57,6 +65,9 @@ public class SQL {
 			pstmt.setString(3, sname);
 			pstmt.setString(4, suburb);
 			pstmt.setInt(5, bednum);
+			pstmt.setBoolean(6, isapt);
+			pstmt.setBoolean(7, false);
+			pstmt.setString(8, imgpath);
 			result = pstmt.executeUpdate();
 			con.commit();
 		} catch (Exception e) {
