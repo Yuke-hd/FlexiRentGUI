@@ -6,97 +6,25 @@ public class FlexiRentSystem {
 	Scanner sc = new Scanner(System.in);
 	private ArrayList<Property> propList = new ArrayList<Property>();
 
-	public void menu() {
-		Scanner sc = new Scanner(System.in);
-		FlexiRentSystem admin = new FlexiRentSystem();
-		while (true) {
-			System.out.println("**** FLEXIRENT SYSTEM MENU **** ");
-			System.out.println("Add Property:                  1");
-			System.out.println("Rent Property:                 2");
-			System.out.println("Return Property:               3");
-			System.out.println("Property Maintenance:          4");
-			System.out.println("Complete Maintenance:          5");
-			System.out.println("Display All Properties:        6");
-			System.out.println("Exit Program:                  7");
-			System.out.print("Enter your choice: ");
-			int x;
-			try {
-				x = sc.nextInt();
-				sc.nextLine();
-			} catch (Exception e) {
-				sc.nextLine();
-				x=7;
-			}
-			switch (x) {
-			case 1:
-				admin.addProp();
-				break;
-			case 2:
-				admin.rentProp();
-				break;
-			case 3:
-				admin.returnProp();
-				break;
-			case 4:
-				admin.performMaintenance();
-				break;
-			case 5:
-				admin.completeMaintenance();
-				break;
-			case 6:
-				admin.displayAllProp();
-				break;
-			case 7:
-				System.exit(0);
-			case 8: break;
-			default:
-				break;
-			}// sc.close();
-		}
-	}
 
-	public void addProp() {
-		System.out.printf("\n"+"**** add property ****"+"\n"+"Property ID:");
-		String propId = sc.nextLine();
-		for (int i =0; i<propList.size();i++) {
-			if (propId.equals(propList.get(i).getPropId())) 
-				{System.out.println("property id already exsits");
-				return;}
-		}
-		String propId0 = propId.substring(0, 2);
-		if (!(propId0.equals("A_")||propId0.equals("S_"))) {
-			System.out.println("invalid property id, must starts with \"A_\" or \"S_\""+"\n");return;
-		}
-		System.out.println("Street number:");
-		String streetNum = sc.nextLine();
-		System.out.println("Street name:");
-		String streetName = sc.nextLine();
-		System.out.println("Suburb");
-		String suburb = sc.nextLine();
-		if (propId.startsWith("A_")) {
-			int bedNum;
-			do {bedNum=0;
-				try {
-					System.out.println("Bed number(1-3)");
-					bedNum = sc.nextInt();
-					sc.nextLine();
-				} catch (Exception e) {
-					sc.nextLine();
-					System.out.println("try again");
-					continue;
-				}
-			} while (bedNum>3||bedNum<1);
-			Apartment apt = new Apartment(propId, streetNum, streetName, suburb, bedNum,"/");
-			propList.add(apt);
-		} else if (propId.startsWith("S_")){
-			Suite suite = new Suite(propId, streetNum, streetName, suburb);
-			System.out.println("Set Maintenance Date: ");
-			DateTime MntDate = inputDate();
-			suite.setMntDate(MntDate);
-			propList.add(suite);
-		} 
-		System.out.println(propList.get(propList.size()-1).getClass().getSimpleName()+" "+propId+" created. "+"\n");
+
+	public void addProp(String id,String snum,String sname,String suburb,int bednum,String imgpath) {
+		
+
+			Apartment prop = new Apartment(id, snum, sname, suburb, bednum,imgpath);
+			propList.add(prop);
+			System.out.println("APTARTMENT");
+		System.out.println(propList.get(propList.size()-1).getClass().getSimpleName()+" "+id+" created. "+"\n");
 	}
+	
+	public void addProp(String id,String snum,String sname,String suburb,String imgpath) {
+		
+
+		Suite prop = new Suite(id, snum, sname, suburb,imgpath);
+		propList.add(prop);
+		System.out.println("SUITE");
+	System.out.println(propList.get(propList.size()-1).getClass().getSimpleName()+" "+id+" created. "+"\n");
+}
 
 	private void rentProp() {
 		System.out.printf("\n"+"**** rent property ****"+"\n");

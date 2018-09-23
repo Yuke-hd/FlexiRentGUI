@@ -1,10 +1,10 @@
 package model;
 
-class Suite extends Property {
+public class Suite extends Property {
 	DateTime _mntDate;
 
-	public Suite(String propId, String streetNum, String streetName, String suburb) {
-		super(propId, streetNum, streetName, suburb, 3, false, false,"/");
+	public Suite(String propId, String streetNum, String streetName, String suburb,String imgpath) {
+		super(propId, streetNum, streetName, suburb, 3, false, false,imgpath);
 
 	}
 

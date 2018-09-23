@@ -47,3 +47,8 @@ SET SCHEMA PUBLIC
 INSERT INTO PROPERTY VALUES('sadf','dasf','asdf','asdf',2,TRUE,FALSE,'res/pic/238_Flinders_Street.jpg')
 INSERT INTO PROPERTY VALUES('asdds','dasf','asdf','asdf',2,TRUE,FALSE,'res/pic/243_Franklin_Street.jpg')
 INSERT INTO PROPERTY VALUES('asddsg','dasf','asdf','asdf',2,TRUE,FALSE,'res/pic/442_Elizabeth_Street.jpg')
+INSERT INTO PROPERTY VALUES('A_21cv','21','cityview road','balwyn north',5,TRUE,FALSE,'res/pic/668 Bourke Street.jpg')
+INSERT INTO PROPERTY VALUES('S_357BKS','357','Burke Street','Melbourne',3,TRUE,FALSE,'res/pic/9 Degraves Street.jpg')
+INSERT INTO PROPERTY VALUES('S_432DCR','432','Doncaster Road','Box Hill North',3,TRUE,FALSE,'res/pic/55 Queens Road.jpg')
+INSERT INTO PROPERTY VALUES('S_fassdf','312','sadfase','melbourne',3,TRUE,FALSE,'res/pic/325 Collins Street.jpg')
+INSERT INTO PROPERTY VALUES('S_234dasfg','234','jhgf','St Kilda',3,FALSE,FALSE,'res/pic/470 St Kilda Road.jpg')
