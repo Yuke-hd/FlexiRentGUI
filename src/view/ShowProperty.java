@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import controller.RentHandler;
 import controller.SQL;
+import controller.Utility;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -15,18 +18,22 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.FlexiRentSystem;
+import model.Property;
 
 public class ShowProperty {
 
 	public String propId;
-	FlexiRentSystem admin = new FlexiRentSystem();
+	public FlexiRentSystem admin = new FlexiRentSystem();
+	public StringProperty text = new SimpleStringProperty();
+	public FlowPane fp;
+
 
 	public FlowPane show() {
 		ArrayList<VBox> array = new ArrayList<VBox>();
 		ArrayList<String> id = new ArrayList<>();
 		ArrayList<Button> but = new ArrayList<>();
 
-		FlowPane fp = new FlowPane();
+		fp = new FlowPane();
 		// gp.setPadding(new Insets(0, 50, 50, 50));
 		fp.setAlignment(Pos.CENTER);
 		fp.setHgap(50);
@@ -35,37 +42,28 @@ public class ShowProperty {
 		System.out.println(result.size());
 		
 		for (int i = 0; i < result.size(); i = i + 2) {
-			try {
-				VBox vb = new VBox();
-				vb.setAlignment(Pos.CENTER);
-				id.add(result.get(i + 1));
-				Text textBox = new Text(trimString(4, result.get(i + 1)));
-				
-				FileInputStream input;
-				input = new FileInputStream(result.get(i));
-				Image image = new Image(input);
-				ImageView imageBox = new ImageView(image);
+			VBox vb = new VBox();
+			vb.setAlignment(Pos.CENTER);
+			id.add(result.get(i + 1));
+			Text textBox = new Text(Utility.trimString(4, result.get(i + 1)));
+			
+			
+			
+			ImageView imageBox = Utility.drawImg(result.get(i), 200);
 
-				imageBox.setFitWidth(200);
-				imageBox.setPreserveRatio(true);
+			Button rentButton = new Button("More details");
+			but.add(rentButton);
 
-				Button rentButton = new Button("Rent!");
-				but.add(rentButton);
-
-				vb.getChildren().addAll(imageBox, textBox, rentButton);
-				array.add(vb);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			vb.getChildren().addAll(imageBox, textBox, rentButton);
+			array.add(vb);
 		}
 		importProp(result);
 		for (int j = 0; j < but.size(); j++) {
 			String g;
 			String[] k = id.get(j).split("-");
 			g = k[0];
-			System.out.println(g);
-			but.get(j).setUserData(g);//pass the prop id to event handler.
-			but.get(j).setOnAction(new RentHandler());
+			but.get(j).setUserData(j);//pass the no. of this button to event handler.
+			but.get(j).setOnAction(new RentHandler(this));
 		}
 		
 		fp.getChildren().addAll(array);
@@ -95,29 +93,11 @@ public class ShowProperty {
 		
 	}
 	
-	private String trimString(int size, String info) {
-		String string="";
-		String[] sArray = info.split("-");
-		for (int i = 1; i < size; i++) {
-			string=string.concat(" "+sArray[i-1]);
-		}
-		return string;
-	}
+
 
 	private Node placeHolderBox() {
 		VBox placeHolder = new VBox();
-		FileInputStream input;
-		try {
-			input = new FileInputStream("res/pic/COMING-SOON.gif");
-			Image image = new Image(input);
-			ImageView imageBox = new ImageView(image);
-			imageBox.setFitWidth(200);
-			imageBox.setPreserveRatio(true);
-			placeHolder.getChildren().add(imageBox);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		placeHolder.getChildren().add(Utility.drawImg("res/pic/COMING-SOON.gif", 200));
 		return placeHolder;
 	}
 	
