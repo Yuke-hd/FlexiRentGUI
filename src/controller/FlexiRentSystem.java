@@ -1,6 +1,6 @@
-package model;
+package controller;
 
-import java.util.*;
+import java.util.*;import model.*;
 
 public class FlexiRentSystem {
 	Scanner sc = new Scanner(System.in);
@@ -8,38 +8,43 @@ public class FlexiRentSystem {
 
 
 
-	public void addProp(String id,String snum,String sname,String suburb,int bednum,String imgpath) {
+	public void addProp(String id,String snum,String sname,String suburb,int bednum,boolean isRented,String imgpath) {
 		
 
-			Apartment prop = new Apartment(id, snum, sname, suburb, bednum,imgpath);
+			Apartment prop = new Apartment(id, snum, sname, suburb, bednum,isRented,imgpath);
 			propList.add(prop);
 			System.out.println("APTARTMENT");
 		System.out.println(propList.get(propList.size()-1).getClass().getSimpleName()+" "+id+" created. "+"\n");
 	}
 	
-	public void addProp(String id,String snum,String sname,String suburb,String imgpath) {
+	public void addProp(String id,String snum,String sname,String suburb,boolean isRented,String imgpath) {
 		
 
-		Suite prop = new Suite(id, snum, sname, suburb,imgpath);
+		Suite prop = new Suite(id, snum, sname, suburb,isRented,imgpath);
 		propList.add(prop);
 		System.out.println("SUITE");
 	System.out.println(propList.get(propList.size()-1).getClass().getSimpleName()+" "+id+" created. "+"\n");
 }
 
-	private void rentProp() {
+	void rentProp(int propNum, String custID, String rentDate, int days) {
 		System.out.printf("\n"+"**** rent property ****"+"\n");
-		int objNum = inputPropID();
+		int objNum = propNum;
 		if (objNum < 0 || propList.get(objNum).getStat()) {
 			System.out.println("Invalid property ID"+"\n");
 			return;
 		}
-		System.out.println("Customer id:");
-		String custID = sc.nextLine();
-		System.out.println("Rent date (dd/mm/yyyy):");
-		DateTime startDate = inputDate();
-		System.out.println("How many days?:");
-		int rentDay = sc.nextInt();sc.nextLine();
-		propList.get(objNum).setStat1(propList.get(objNum).rent(custID, startDate, rentDay));
+		System.out.println("Customer id: "+custID);
+
+		DateTime startDate = inputDate(rentDate);
+		System.out.println("Rent date (dd/mm/yyyy): " + rentDate);
+		
+		System.out.println("How many days?: "+days);
+
+		propList.get(objNum).setStat1(propList.get(objNum).rent(custID, startDate, days));
+		boolean stat = propList.get(objNum).getStat();
+		String propId = propList.get(objNum).getPropId();
+		
+		SQL.update(stat, propId);
 		System.out.println();
 		return;
 	}
@@ -50,12 +55,12 @@ public class FlexiRentSystem {
 	* @see FlexiRentSystem.rentProp
 	* @see FlexiRentSystem.returnProp
 	*/
-	private DateTime inputDate() {
+	private DateTime inputDate(String date) {
 		String inputDate;
 		int day,month,year;
 		do {
 			try {
-				inputDate = sc.nextLine();
+				inputDate = date;
 				String[] datePart = inputDate.split("/");
 				day = Integer.parseInt(datePart[0]);
 				month = Integer.parseInt(datePart[1]);
@@ -70,15 +75,14 @@ public class FlexiRentSystem {
 		return Date;
 	}
 	
-	private void returnProp() {
+	public void returnProp(String propId, String Date) {
 		System.out.printf("\n"+"**** return property ****"+"\n");
-		int objNum = inputPropID();
+		int objNum = inputPropID(propId);
 		if (objNum < 0||!propList.get(objNum).getStat()) {
 			System.out.println("property does not exsit or not rented"+"\n");
 			return;
 		}
-		System.out.println("Return date (dd/mm/yyyy):");
-		DateTime returnDate = inputDate();
+		DateTime returnDate = inputDate(Date);
 		propList.get(objNum).setStat1(!propList.get(objNum).returnProperty(returnDate));
 		return;
 	}
@@ -88,9 +92,9 @@ public class FlexiRentSystem {
 	* @see FlexiRentSystem.rentProp
 	* @see FlexiRentSystem.returnProp
 	*/
-	private int inputPropID() {
+	private int inputPropID(String id) {
 		System.out.println("Please input property ID:");
-		String _propId = sc.nextLine();
+		String _propId = id;
 		int objNum = -1;
 		for (int i = 0; i < propList.size(); i++) {
 			if (_propId.equals(propList.get(i).getPropId())) {
@@ -141,7 +145,10 @@ public class FlexiRentSystem {
 	}
 
 	public ArrayList<Property> getPropList() {
-		return propList;
+		return this.propList;
 		
+	}
+	public void setPropList() {
+		this.propList.clear();
 	}
 }

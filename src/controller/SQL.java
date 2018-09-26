@@ -4,17 +4,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
 import model.Apartment;
 import model.Property;
+import model.Record;
 
 public class SQL {
 	final static String driver = "org.hsqldb.jdbc.JDBCDriver";
 	final static String dbPath = "jdbc:hsqldb:file:database/RENTAL_PROPERTY";
-	//final static String dbPath = "jdbc:hsqldb:file:/database/RENTAL_PROPERTY";
-	
+	final static String dbPath1 = "jdbc:hsqldb:file:database/RENTAL_RECORDS";
+
 	public static ArrayList<String> ViewData() {
 		Connection con = null;
 		Statement stmt = null;
@@ -26,11 +29,19 @@ public class SQL {
 			con = DriverManager.getConnection(dbPath, "SA", "");
 			stmt = con.createStatement();
 			result = stmt.executeQuery("SELECT * FROM PROPERTY");
+			ResultSetMetaData resultSetMetaData = result.getMetaData();
 
 			while (result.next()) {
-				System.out.println(result.getString("imgpath"));
-				s1.add(result.getString(8));
-				s1.add(result.getString(1)+"-"+result.getString(2)+"-"+result.getString(3)+"-"+result.getString(4)+"-"+result.getString(5)+"-"+result.getString(6));
+				String string = " ";
+				for (int i=1; i<= resultSetMetaData.getColumnCount();i++) {
+					string = string +"-"+result.getString(i);
+					
+				}
+				System.out.println(string);
+				s1.add(string);
+//				s1.add(result.getString(8));
+//				s1.add(result.getString(1) + "-" + result.getString(2) + "-" + result.getString(3) + "-"
+//						+ result.getString(4) + "-" + result.getString(5) + "-" + result.getString(6)+ "-" + result.getString(7));
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
@@ -38,15 +49,25 @@ public class SQL {
 		return s1;
 	}
 
-	public static void addProperty() {
+	public static void update(boolean stat, String propId) {
+		String sql = "UPDATE Property SET isrented = ? where id = ?";
+		try (Connection con = DriverManager.getConnection(dbPath, "SA", "");
+				PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setBoolean(1, stat);
+			stmt.setString(2, propId);
+			stmt.executeUpdate();
 
+			System.out.println("Database updated successfully ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void insertData(Property prop) {
 		Connection con = null;
-		//Statement pstmt = null;
-		String sql = "INSERT INTO Property (id, snum, sname, suburb, bednum, isapt, isrented, imgpath) " + 
-		" Values (?, ?, ?, ?, ?,?,?,?)";
+		// Statement pstmt = null;
+		String sql = "INSERT INTO Property (id, snum, sname, suburb, bednum, isapt, isrented, imgpath) "
+				+ " Values (?, ?, ?, ?, ?,?,?,?)";
 		Statement stmt = null;
 		int result = 0;
 		String id = prop.getPropId();
@@ -78,4 +99,40 @@ public class SQL {
 		System.out.println("Rows inserted successfully");
 	}
 
+	public void name(String propid,Record rec) {
+		Connection con = null;
+		// Statement pstmt = null;
+		String sql = "INSERT INTO Records (id, recordid, startDate, endDate , returnDate , rentFee , lateFee) "
+				+ " Values (?, ?, ?, ?, ?,?,?)";
+		Statement stmt = null;
+		int result = 0;
+
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(dbPath1, "SA", "");
+			stmt = con.createStatement();
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			
+			String recID=rec.getRecordID();
+			String sdate=Utility.convertDate(rec.getStartDat());
+			String edate=Utility.convertDate(rec.getEndDat());
+			String rdate=Utility.convertDate(rec.getReturnDate());
+			double rentfee= rec.getRentFee();
+			double latefee= rec.getLateFee();
+			
+			
+			pstmt.setString(1, propid);
+			pstmt.setString(2, sdate);
+			pstmt.setString(3, edate);
+			pstmt.setString(4, rdate);
+			pstmt.setDouble(5, rentfee);
+			pstmt.setDouble(6, latefee);
+			result = pstmt.executeUpdate();
+			con.commit();
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+		}
+		System.out.println(result + " rows effected");
+		System.out.println("Rows inserted successfully");
+	}
 }

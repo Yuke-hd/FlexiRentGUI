@@ -21,7 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import model.Property;
+import model.*;
 import view.ShowProperty;
 
 public class RentHandler implements EventHandler<ActionEvent> {
@@ -84,6 +84,10 @@ public class RentHandler implements EventHandler<ActionEvent> {
 		pane.add(new TextField(), 1, 2);
 		pane.add(new TextField(), 1, 3);
 		pane.add(rentButton, 1, 4);
+		
+		if (show.admin.getPropList().get(buttonNum).getStat()) {
+			rentButton.setDisable(true);
+		}
 		
 		rentButton.setOnAction(t -> {
 			show.admin.rentProp(buttonNum, 

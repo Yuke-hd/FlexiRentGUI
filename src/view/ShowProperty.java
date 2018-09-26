@@ -4,10 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import controller.FlexiRentSystem;
-import controller.RentHandler;
-import controller.SQL;
-import controller.Utility;
+import controller.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
@@ -18,38 +15,45 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.Property;
+import javafx.scene.text.TextAlignment;
+import model.*;
+
 
 public class ShowProperty {
 
 	public String propId;
-	public FlexiRentSystem admin = new FlexiRentSystem();
+	public FlexiRentSystem admin;
 	public StringProperty text = new SimpleStringProperty();
 	public FlowPane fp;
 
 
-	public FlowPane show() {
+	public FlowPane show(FlexiRentSystem admin) {
 		ArrayList<VBox> array = new ArrayList<VBox>();
 		ArrayList<String> id = new ArrayList<>();
 		ArrayList<Button> but = new ArrayList<>();
+		this.admin=admin;
+		this.admin.setPropList();
 
 		fp = new FlowPane();
 		// gp.setPadding(new Insets(0, 50, 50, 50));
 		fp.setAlignment(Pos.CENTER);
-		fp.setHgap(50);
+		fp.setHgap(80);
 		fp.setVgap(50);
 		ArrayList<String> result = SQL.ViewData();
 		System.out.println(result.size());
 		
-		for (int i = 0; i < result.size(); i = i + 2) {
+		for (int i = 0; i < result.size(); i++) {
 			VBox vb = new VBox();
 			vb.setAlignment(Pos.CENTER);
-			id.add(result.get(i + 1));
-			Text textBox = new Text(Utility.trimString(4, result.get(i + 1)));
+			id.add(result.get(i));
+			Text textBox = new Text(Utility.trimString(1,4, result.get(i)));
+			textBox.setTextAlignment(TextAlignment.CENTER);
+			textBox.setWrappingWidth(200);
 			
 			
-			
-			ImageView imageBox = Utility.drawImg(result.get(i), 200);
+			String imgPath=Utility.trimString(8,result.get(i));
+			System.out.println(Utility.trimString(1,4, result.get(i)));
+			ImageView imageBox = Utility.drawImg(imgPath, 200);
 
 			Button rentButton = new Button("More details");
 			but.add(rentButton);
@@ -58,10 +62,8 @@ public class ShowProperty {
 			array.add(vb);
 		}
 		importProp(result);
+		
 		for (int j = 0; j < but.size(); j++) {
-			String g;
-			String[] k = id.get(j).split("-");
-			g = k[0];
 			but.get(j).setUserData(j);//pass the no. of this button to event handler.
 			but.get(j).setOnAction(new RentHandler(this));
 		}
@@ -72,21 +74,22 @@ public class ShowProperty {
 	}
 
 	private void importProp(ArrayList<String> result) {
-		for (int i = 0; i < result.size(); i=i+2) {
-			System.out.println(result.get(i+1));
-			String[] propInfo = result.get(i+1).split("-");
+		for (int i = 0; i < result.size(); i++) {
+
+			String[] propInfo = result.get(i).split("-");
 			//id, snum, sname, suburb, bednum,imgpath
-			String id = propInfo[0];
-			String snum = propInfo[1];
-			String sname = propInfo[2];
-			String suburb = propInfo[3];
-			int bednum = Integer.parseInt(propInfo[4]);
-			String imgpath = result.get(i);
-			boolean isApt = Boolean.parseBoolean( propInfo[5]);
+			String id = propInfo[1];
+			String snum = propInfo[2];
+			String sname = propInfo[3];
+			String suburb = propInfo[4];
+			int bednum = Integer.parseInt(propInfo[5]);
+			String imgpath = Utility.trimString(8,result.get(i));
+			boolean isApt = Boolean.parseBoolean( propInfo[6]);
+			boolean isRented = Boolean.parseBoolean( propInfo[7]);
 			if (isApt) {
-				admin.addProp(id, snum, sname, suburb, bednum, imgpath);
+				admin.addProp(id, snum, sname, suburb, bednum, isRented,imgpath);
 			}else {
-				admin.addProp(id, snum, sname, suburb, imgpath);
+				admin.addProp(id, snum, sname, suburb, isRented,imgpath);
 			}
 			
 		}

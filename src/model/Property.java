@@ -7,7 +7,7 @@ public abstract class Property {
 	private String _suburb;
 	private int _bedNum;
 	private boolean _isApt = false;
-	private boolean _isRented = false;
+	private boolean _isRented;
 	private String _imgPath;
 	// LinkedList<Record> propRecord = new LinkedList<Record>();
 	Record[] propRecord = new Record[10];
@@ -20,7 +20,7 @@ public abstract class Property {
 		_suburb = suburb;
 		_bedNum = bedNum;
 		_isApt = isApt;
-		_isRented = false;_imgPath = imgPath;
+		_isRented = isRented;_imgPath = imgPath;
 
 	}
 
@@ -167,10 +167,11 @@ public abstract class Property {
 			status = "Not Available";
 		} else
 			status = "Available";
-		return "Property ID:" + "\t" + getPropId() + "\n" + "Address:" + "\t" + getStreetNum() + " "
-		+ getStreetName() + " " + getSuburb() + "\n" + "Type:" + "\t"
-		+ this.getClass().getSimpleName() + "\n" + "Bedroom:" + "\t" + getBedNum() + "\n" + "Status:"
-		+ "\t" + status + "\n";
+		return "Property ID:" + "\t" + getPropId() + "\n" + 
+				"Address:" + "\t\t" + getStreetNum() + " "+ getStreetName() + " " + getSuburb() + "\n" + 
+				"Type:" + "\t\t"+ this.getClass().getSimpleName() + "\n" + 
+				"Bedroom:" + "\t\t" + getBedNum() + "\n" + 
+				"Status:" + "\t\t" + status + "\n";
 	}
 
 	public String getRecords() {

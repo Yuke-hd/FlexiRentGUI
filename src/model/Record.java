@@ -32,6 +32,23 @@ public class Record {
 	public DateTime getEndDat() {
 		return _endDate;
 	}
+	public DateTime getReturnDate() {
+		return _returnDate;
+	}
+
+	/**
+	 * @return the _rentFee
+	 */
+	public double getRentFee() {
+		return _rentFee;
+	}
+
+	/**
+	 * @return the _lateFee
+	 */
+	public double getLateFee() {
+		return _lateFee;
+	}
 
 	@Override
 	public String toString() {
@@ -49,7 +66,7 @@ public class Record {
 		return "Record ID:" + "\t" + _recordID + "\n" + 
 				"Rent Date:" + "\t" + _startDate.toString() + "\n" + 
 				"Estimated Return Date:" + "\t" + _endDate.toString()+ "\n" + 
-				"=================================";
+				"==============================";
 		} else {
 			return "Record ID:" + "\t" + _recordID + "\n" + 
 					"Rent Date:" + "\t" + _startDate.toString() + "\n" + 
@@ -57,7 +74,7 @@ public class Record {
 					"Actual Return Date:"+ "\t" + _returnDate.toString()+"\n" +
 					"Rental Fee:"+ "\t" + String.format("%.2f", _rentFee)+"\n" +
 					"Late Fee:"+ "\t" + String.format("%.2f", _lateFee)+ "\n"+
-					"=================================";
+					"==============================";
 		}
 	}
 }

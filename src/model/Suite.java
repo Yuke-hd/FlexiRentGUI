@@ -3,8 +3,8 @@ package model;
 public class Suite extends Property {
 	DateTime _mntDate;
 
-	public Suite(String propId, String streetNum, String streetName, String suburb,String imgpath) {
-		super(propId, streetNum, streetName, suburb, 3, false, false,imgpath);
+	public Suite(String propId, String streetNum, String streetName, String suburb,Boolean isRented,String imgpath) {
+		super(propId, streetNum, streetName, suburb, 3, false, isRented,imgpath);
 
 	}
 

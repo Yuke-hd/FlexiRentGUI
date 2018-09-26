@@ -3,7 +3,9 @@ package view;
 import java.io.File;
 import java.io.FileInputStream;
 
+import controller.FlexiRentSystem;
 import controller.SQL;
+import controller.Utility;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +20,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -36,13 +40,15 @@ public class Main extends Application {
 	GridPane p0 = new GridPane();
 	Stage stage;
 	public MenuItem menuItem1_1_1 = new MenuItem("Add Aptartment");
+	FlexiRentSystem admin = new FlexiRentSystem();
 
 	@Override
 	public void start(Stage primaryStage) {
+		Utility.importProp(admin, SQL.ViewData());
 		try {
-			primaryStage.setTitle("JavaFX App");
+			primaryStage.setTitle("form1");
 			try {
-				FileInputStream input = new FileInputStream("./res/Horde.png");
+				FileInputStream input = new FileInputStream("res/f.png");
 				Image image = new Image(input);
 				primaryStage.getIcons().add(image);
 			} catch (Exception e) {
@@ -50,15 +56,25 @@ public class Main extends Application {
 			}
 			VBox menu = new VBox(addMenu());
 			// FlowPane content = new FlowPane(contents);
-			// content.setAlignment(Pos.CENTER);
+			
 
+			BorderPane p = new BorderPane();
+			ImageView imageBox0 = Utility.drawImg("res/f.png", 300);
+			ImageView imageBox1 = Utility.drawImg("res/logo3.png", 450);
+			p.setTop(imageBox0);
+			p.setAlignment(imageBox0, Pos.CENTER);
+			
+			p.setCenter(imageBox1);
+			//p.setPadding(new Insets(50));
+			contents.setContent(p);
 			VBox root = new VBox(menu, contents);
 			Scene scene = new Scene(root, 600, 600);
 			primaryStage.setResizable(true);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			stage = primaryStage;
-			contents.prefHeightProperty().bind(stage.heightProperty().subtract(100));
+			p.prefWidthProperty().bind(stage.widthProperty().subtract(35));
+			contents.prefHeightProperty().bind(stage.heightProperty().subtract(90));
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -66,26 +82,28 @@ public class Main extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
+		
 	}
 
 	private MenuBar addMenu() {
 		MenuBar menuBar = new MenuBar();
 		Menu menu1 = new Menu("Menu 1");
 		Menu subMenu = new Menu("Add Property");
-		MenuItem menuItem1_2 = new MenuItem("Exit");
+		MenuItem menuItem1_2 = new MenuItem("Return Property");
+		MenuItem menuItem1_3 = new MenuItem("Exit");
 		MenuItem menuItem1_1_1 = new MenuItem("Add Aptartment");
 		MenuItem menuItem1_1_2 = new MenuItem("Add Suite");
 		Menu menu2 = new Menu("Menu 2");
 		MenuItem menuItem2_1 = new MenuItem("Item 2");
 		menuBar.getMenus().add(menu1);
 		menuBar.getMenus().add(menu2);
-		menu1.getItems().add(subMenu);
-		menu1.getItems().add(menuItem1_2);
+		menu1.getItems().addAll(subMenu,menuItem1_2,menuItem1_3);
 		menu2.getItems().add(menuItem2_1);
 		subMenu.getItems().addAll(menuItem1_1_1, menuItem1_1_2);
 		menuItem1_1_1.setOnAction(new AddAptHandler());
 		menuItem1_1_2.setOnAction(new AddSuiteHandler());
-		menuItem1_2.setOnAction(new MenuItem1_2Handler());
+		menuItem1_2.setOnAction(new ReturnProperty(admin));
+		menuItem1_3.setOnAction(new MenuItem1_2Handler());
 		menuItem2_1.setOnAction(new ViewPropHandler());
 		return menuBar;
 	}
@@ -237,7 +255,7 @@ System.out.println("exiting"); System.exit(0);
 			container.getChildren().clear();
 
 			VBox vb = new VBox();
-			vb.setSpacing(10);
+			vb.setSpacing(50);
 			vb.setAlignment(Pos.TOP_CENTER);
 
 			Label lbl = new Label("PROPERTY LIST");
@@ -251,8 +269,8 @@ System.out.println("exiting"); System.exit(0);
 			 * vb.getChildren().add(propDetails); }
 			 */
 
-			FlowPane fp = a.show();
-			fp.prefWidthProperty().bind(stage.widthProperty());
+			FlowPane fp = a.show(admin);
+			fp.prefWidthProperty().bind(stage.widthProperty().subtract(35));
 
 			vb.getChildren().addAll(lbl, fp);
 			// container.getChildren().addAll(vb,fp);
@@ -274,16 +292,26 @@ System.out.println("exiting"); System.exit(0);
 			imgpath = ((Text) pane.getChildren().get(12)).getText();
 			try {
 				bednum = Integer.parseInt(((TextField) pane.getChildren().get(9)).getText());
-				Apartment apt = new Apartment(id, snum, sname, suburb, bednum, imgpath);
+				Apartment apt = new Apartment(id, snum, sname, suburb, bednum, false,imgpath);
 				System.out.println(id + " " + snum + " " + sname + " " + suburb + " " + bednum + " " + imgpath);
 				SQL.insertData(apt);
 			} catch (ClassCastException e2) {
 				bednum = Integer.parseInt(((Text) pane.getChildren().get(9)).getText());
-				Suite suite = new Suite(id, snum, sname, suburb, imgpath);
+				Suite suite = new Suite(id, snum, sname, suburb, false,imgpath);
 				System.out.println("SUTIE "+id + " " + snum + " " + sname + " " + suburb + " " + bednum + " " + imgpath);
 				SQL.insertData(suite);
 			}
 
 		}
+	}
+
+	class ReturnPropHandler implements EventHandler<ActionEvent> {
+
+		@Override
+		public void handle(ActionEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }
