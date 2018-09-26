@@ -1,5 +1,7 @@
 package controller;
 
+import java.io.File;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -8,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -15,6 +18,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Property;
@@ -22,6 +26,8 @@ import view.ShowProperty;
 
 public class RentHandler implements EventHandler<ActionEvent> {
 
+	Stage stage=new Stage();
+	Scene scene;
 	Button obj;
 	ShowProperty show;
 	int buttonNum;
@@ -37,21 +43,25 @@ public class RentHandler implements EventHandler<ActionEvent> {
 		buttonNum = (int) obj.getUserData();
 		
 		GridPane root = new GridPane();
-		Scene scene = new Scene(paneItem(),400,800);
-		Stage stage = new Stage();
+		scene = new Scene(paneItem(),400,600);
 		
 		stage.setTitle("Rent Property");
 		stage.setScene(scene);
+		stage.setResizable(false);
 		stage.show();
 		
 	}
 
-	private VBox paneItem() {
-		VBox vb = new VBox();vb.setAlignment(Pos.TOP_CENTER);
-		HBox hb = new HBox();
+	private ScrollPane paneItem() {
+		ScrollPane sc = new ScrollPane();
+		sc.prefWidthProperty().bind(stage.widthProperty());
+		sc.prefHeightProperty().bind(stage.heightProperty());
+		VBox vb = new VBox();vb.setAlignment(Pos.TOP_CENTER);vb.setSpacing(30);
 		Property prop = show.admin.getPropList().get(buttonNum);
 		ImageView image= Utility.drawImg(prop.getImgPath(), 400);
 		Text records = new Text(prop.getDetails());
+		Button rentButton =  new Button("rent");
+		
 		
 		GridPane pane = new GridPane();
 		pane.setAlignment(Pos.CENTER);
@@ -68,15 +78,24 @@ public class RentHandler implements EventHandler<ActionEvent> {
 		pane.add(new Label("Day:"), 0, 3);
 
 		// left column textfields
-		Text a = new Text();
-		//pane.add(new TextField( (String) ((Button) obj).getUserData() ), 1, 0);
-		pane.add(new Label(show.admin.getPropList().get(buttonNum).getPropId()), 1, 0);
+
+		pane.add(new Label(prop.getPropId()), 1, 0);
 		pane.add(new TextField(), 1, 1);
 		pane.add(new TextField(), 1, 2);
 		pane.add(new TextField(), 1, 3);
+		pane.add(rentButton, 1, 4);
+		
+		rentButton.setOnAction(t -> {
+			show.admin.rentProp(buttonNum, 
+					((TextField) pane.getChildren().get(5)).getText(), 
+					((TextField) pane.getChildren().get(6)).getText(),
+					Integer.parseInt(((TextField) pane.getChildren().get(7)).getText()));
+		});
+		
 		vb.getChildren().add(image);
 		vb.getChildren().add(pane);
 		vb.getChildren().add(records);
-		return vb;
+		sc.setContent(vb);
+		return sc;
 	}
 }

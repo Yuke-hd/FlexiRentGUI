@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import controller.FlexiRentSystem;
 import controller.RentHandler;
 import controller.SQL;
 import controller.Utility;
@@ -17,7 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.FlexiRentSystem;
 import model.Property;
 
 public class ShowProperty {
