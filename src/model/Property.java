@@ -1,5 +1,8 @@
 package model;
 
+import controller.SQL;
+import controller.Utility;
+
 public abstract class Property {
 	private String _propId;
 	private String _streetNum;
@@ -71,6 +74,14 @@ public abstract class Property {
 		return _bedNum;
 	}
 
+	public Record[] getRecordList() {
+		return propRecord;
+	}
+
+	public void setRecordList(Record[] rec) {
+		propRecord=rec;
+	}
+
 	/**
 	 * Set a record id 
 	 * @param propID property id
@@ -90,6 +101,8 @@ public abstract class Property {
 		Record record = new Record(propRecord[0].getRecordID(), propRecord[0].getStartDat(), propRecord[0].getEndDat(),
 				returnDate, fee, lateFee);
 		propRecord[0] = record;
+		SQL.update(false, this.getPropId());
+		SQL.insertRecords(this.getPropId(), record);
 		System.out.println(propRecord[0].toString());
 		return true;
 	}
@@ -193,4 +206,9 @@ public abstract class Property {
 		}
 		return rec;
 	}
+
+	public void addRecords() {
+		
+	}
+
 }

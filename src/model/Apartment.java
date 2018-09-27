@@ -1,5 +1,7 @@
 package model;
 
+import controller.SQL;
+
 public class Apartment extends Property{
 
 	public Apartment(String propId, String streetNum, String streetName, String suburb, int bedNum,Boolean isRented, String imgpath) {
@@ -41,6 +43,8 @@ public class Apartment extends Property{
 			propRecord[i]=propRecord[i-1];
 		}
 		propRecord[0]=record;
+		SQL.update(true, this.getPropId());
+		SQL.insertRecords(this.getPropId(), record);
 		System.out.println(propRecord[0].toString());
 		return true;
 	}

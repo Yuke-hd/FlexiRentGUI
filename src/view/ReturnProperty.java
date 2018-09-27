@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import controller.FlexiRentSystem;
+import controller.SQL;
 import controller.Utility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -130,19 +131,7 @@ class ReturnHandler implements EventHandler<ActionEvent> {
 		ComboBox<String> cBox=((ComboBox) gp.getChildren().get(2));
 		String date = ((TextField) gp.getChildren().get(3)).getText();
 		//admin.returnProp(cBox.getValue(), date);
-		DateTime date2 = new DateTime(10,10,2018);
-		System.out.println(date2.toString());
-		System.out.println(Utility.convertDate(date2));
-		System.out.println(Utility.reverseDate(Utility.convertDate(date2)));
-		SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd"); 
-		String sDate1="2018-12-12";
-		try {
-			Date date1=formatter1.parse(sDate1);
-			System.out.println(date1);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
+		SQL.viewRecords("S_432DCR");
 	}
 }
 

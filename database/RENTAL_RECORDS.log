@@ -1,7 +1,0 @@
-/*C1*/SET SCHEMA SYSTEM_LOBS
-INSERT INTO BLOCKS VALUES(0,2147483647,0)
-COMMIT
-/*C2*/SET SCHEMA PUBLIC
-CREATE TABLE Records(\u000aid varchar(40),\u000arecordID varchar(40), \u000astartDate date, \u000aendDate date, \u000areturnDate date, \u000arentFee double ,\u000alateFee double \u000a\u000a\u000a)
-INSERT INTO RECORDS VALUES('sdaf','gdsdc3','2018-10-10','2018-10-10','2018-10-10',100.0E0,0.0E0)
-COMMIT

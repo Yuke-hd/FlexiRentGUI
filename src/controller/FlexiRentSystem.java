@@ -44,7 +44,7 @@ public class FlexiRentSystem {
 		boolean stat = propList.get(objNum).getStat();
 		String propId = propList.get(objNum).getPropId();
 		
-		SQL.update(stat, propId);
+		
 		System.out.println();
 		return;
 	}
@@ -92,7 +92,7 @@ public class FlexiRentSystem {
 	* @see FlexiRentSystem.rentProp
 	* @see FlexiRentSystem.returnProp
 	*/
-	private int inputPropID(String id) {
+	public int inputPropID(String id) {
 		System.out.println("Please input property ID:");
 		String _propId = id;
 		int objNum = -1;

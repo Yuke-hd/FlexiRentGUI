@@ -99,13 +99,30 @@ public class SQL {
 		System.out.println("Rows inserted successfully");
 	}
 
-	public void name(String propid,Record rec) {
+	public static void insertRecords(String propid,Record rec) {
 		Connection con = null;
 		// Statement pstmt = null;
-		String sql = "INSERT INTO Records (id, recordid, startDate, endDate , returnDate , rentFee , lateFee) "
-				+ " Values (?, ?, ?, ?, ?,?,?)";
+		
 		Statement stmt = null;
 		int result = 0;
+		String sql;
+		String recID=rec.getRecordID();
+		String sdate=Utility.convertDate(rec.getStartDat());
+		String edate=Utility.convertDate(rec.getEndDat());
+		String rdate="";
+		double rentfee= rec.getRentFee();
+		double latefee=0.0;
+		
+		if (rentfee>0.0) {
+			rdate=Utility.convertDate(rec.getReturnDate());
+			rentfee= rec.getRentFee();
+			latefee= rec.getLateFee();
+			sql = "INSERT INTO Records (id, recordid, startDate, endDate , returnDate , rentFee , lateFee) "
+					+ " Values (?, ?, ?, ?, ?,?,?)";
+		} else {
+			sql = "INSERT INTO Records (id, recordid, startDate, endDate) "
+					+ " Values (?, ?, ?, ?)";
+		}
 
 		try {
 			Class.forName(driver);
@@ -113,26 +130,52 @@ public class SQL {
 			stmt = con.createStatement();
 			PreparedStatement pstmt = con.prepareStatement(sql);
 			
-			String recID=rec.getRecordID();
-			String sdate=Utility.convertDate(rec.getStartDat());
-			String edate=Utility.convertDate(rec.getEndDat());
-			String rdate=Utility.convertDate(rec.getReturnDate());
-			double rentfee= rec.getRentFee();
-			double latefee= rec.getLateFee();
-			
-			
 			pstmt.setString(1, propid);
-			pstmt.setString(2, sdate);
-			pstmt.setString(3, edate);
-			pstmt.setString(4, rdate);
-			pstmt.setDouble(5, rentfee);
-			pstmt.setDouble(6, latefee);
+			pstmt.setString(2, recID);
+			pstmt.setString(3, sdate);
+			pstmt.setString(4, edate);
+			if (rentfee>0.0) {
+				pstmt.setString(5, rdate);
+				pstmt.setDouble(6, rentfee);
+				pstmt.setDouble(7, latefee);
+			}
 			result = pstmt.executeUpdate();
 			con.commit();
+			System.out.println(result + " rows effected");
+			System.out.println("Rows inserted successfully");
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 		}
-		System.out.println(result + " rows effected");
-		System.out.println("Rows inserted successfully");
+		
 	}
+
+	public static ArrayList<String> viewRecords(String id) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet result = null;
+		ArrayList<String> s1 = new ArrayList<>();
+
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(dbPath1, "SA", "");
+			stmt = con.prepareStatement("SELECT * FROM RECORDS WHERE id = ?");
+			stmt.setString(1,id);
+			result = stmt.executeQuery();
+			ResultSetMetaData resultSetMetaData = result.getMetaData();
+
+			while (result.next()) {
+				String string = " ";
+				for (int i=1; i<= resultSetMetaData.getColumnCount();i++) {
+					string = string +"/"+result.getString(i);
+					
+				}
+				System.out.println(string);
+				s1.add(string);
+			}
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+		}
+		return s1;
+	}
+
 }

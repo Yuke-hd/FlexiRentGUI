@@ -44,7 +44,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		Utility.importProp(admin, SQL.ViewData());
+		//Utility.importProp(admin, SQL.ViewData());
 		try {
 			primaryStage.setTitle("form1");
 			try {
