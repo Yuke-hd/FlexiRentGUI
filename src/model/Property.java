@@ -2,6 +2,7 @@ package model;
 
 import controller.SQL;
 import controller.Utility;
+import customException.RentDayCheckException;
 
 public abstract class Property {
 	private String _propId;
@@ -93,7 +94,7 @@ public abstract class Property {
 		return propID + "_" + customerId + "_" + today.toString();
 	}
 
-	public abstract boolean rent(String customerId, DateTime rentDate, int numOfRentDay);
+	public abstract boolean rent(String customerId, DateTime rentDate, int numOfRentDay) throws RentDayCheckException;
 
 	public boolean returnProperty(DateTime returnDate) {
 		double fee = this.getFee(this._isApt, propRecord[0].getStartDat(), propRecord[0].getEndDat(), returnDate);
@@ -102,8 +103,8 @@ public abstract class Property {
 				returnDate, fee, lateFee);
 		propRecord[0] = record;
 		SQL.update(false, this.getPropId());
-		SQL.insertRecords(this.getPropId(), record);
-		System.out.println(propRecord[0].toString());
+		SQL.updateRecords(this.getPropId(), returnDate, fee, lateFee);
+		System.out.println(fee);
 		return true;
 	}
 

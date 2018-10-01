@@ -13,11 +13,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -33,18 +37,21 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Apartment;
+import model.DateTime;
 import model.Suite;
 
 public class Main extends Application {
 	ScrollPane contents = new ScrollPane();
 	GridPane p0 = new GridPane();
 	Stage stage;
+	VBox root;
+	HBox comboBoxRow = new HBox(50);
 	public MenuItem menuItem1_1_1 = new MenuItem("Add Aptartment");
 	FlexiRentSystem admin = new FlexiRentSystem();
 
 	@Override
 	public void start(Stage primaryStage) {
-		//Utility.importProp(admin, SQL.ViewData());
+		// Utility.importProp(admin, SQL.ViewData());
 		try {
 			primaryStage.setTitle("form1");
 			try {
@@ -56,21 +63,21 @@ public class Main extends Application {
 			}
 			VBox menu = new VBox(addMenu());
 			// FlowPane content = new FlowPane(contents);
-			
 
 			BorderPane p = new BorderPane();
 			ImageView imageBox0 = Utility.drawImg("res/f.png", 300);
 			ImageView imageBox1 = Utility.drawImg("res/logo3.png", 450);
 			p.setTop(imageBox0);
 			p.setAlignment(imageBox0, Pos.CENTER);
-			
+
 			p.setCenter(imageBox1);
-			//p.setPadding(new Insets(50));
+			// p.setPadding(new Insets(50));
 			contents.setContent(p);
-			VBox root = new VBox(menu, contents);
+			root = new VBox(menu, contents);
 			Scene scene = new Scene(root, 600, 600);
 			primaryStage.setResizable(true);
 			primaryStage.setScene(scene);
+			primaryStage.setOnCloseRequest(t -> System.exit(0));
 			primaryStage.show();
 			stage = primaryStage;
 			p.prefWidthProperty().bind(stage.widthProperty().subtract(35));
@@ -82,14 +89,14 @@ public class Main extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
-		
+
 	}
 
 	private MenuBar addMenu() {
 		MenuBar menuBar = new MenuBar();
-		Menu menu1 = new Menu("Menu 1");
+		Menu menu1 = new Menu("File");
 		Menu subMenu = new Menu("Add Property");
-		MenuItem menuItem1_2 = new MenuItem("Return Property");
+		MenuItem menuItem1_2 = new MenuItem("View Property");
 		MenuItem menuItem1_3 = new MenuItem("Exit");
 		MenuItem menuItem1_1_1 = new MenuItem("Add Aptartment");
 		MenuItem menuItem1_1_2 = new MenuItem("Add Suite");
@@ -97,12 +104,12 @@ public class Main extends Application {
 		MenuItem menuItem2_1 = new MenuItem("Item 2");
 		menuBar.getMenus().add(menu1);
 		menuBar.getMenus().add(menu2);
-		menu1.getItems().addAll(subMenu,menuItem1_2,menuItem1_3);
+		menu1.getItems().addAll(subMenu, menuItem1_2, menuItem1_3);
 		menu2.getItems().add(menuItem2_1);
 		subMenu.getItems().addAll(menuItem1_1_1, menuItem1_1_2);
 		menuItem1_1_1.setOnAction(new AddAptHandler());
 		menuItem1_1_2.setOnAction(new AddSuiteHandler());
-		menuItem1_2.setOnAction(new ReturnProperty(admin));
+		menuItem1_2.setOnAction(new ViewPropHandler());
 		menuItem1_3.setOnAction(new MenuItem1_2Handler());
 		menuItem2_1.setOnAction(new ViewPropHandler());
 		return menuBar;
@@ -189,7 +196,7 @@ public class Main extends Application {
 			pane.add(new Label("Street Number:"), 0, 1);
 			pane.add(new Label("Street Name:"), 0, 2);
 			pane.add(new Label("Suburb:"), 0, 3);
-			pane.add(new Label("Bedroom number:"), 0, 4);
+			pane.add(new Label("Maintance Date:"), 0, 4);
 
 			// left column textfields
 			Text a = new Text();
@@ -197,7 +204,7 @@ public class Main extends Application {
 			pane.add(new TextField(), 1, 1);
 			pane.add(new TextField(), 1, 2);
 			pane.add(new TextField(), 1, 3);
-			pane.add(new Text("3"), 1, 4);
+			pane.add(new TextField(), 1, 4);
 
 			pane.add(new Label("Photo:"), 0, 5);
 			Button openButton = new Button("Open a Picture...");
@@ -237,52 +244,86 @@ public class Main extends Application {
 		@Override // Override the handle method
 		public void handle(ActionEvent e) {
 
-System.out.println("exiting"); System.exit(0);
-			
-			
+			System.out.println("exiting");
+			System.exit(0);
 
 		}
 	}
 
 	class ViewPropHandler implements EventHandler<ActionEvent> {
+		VBox vb = new VBox();
+		ShowProperty a = new ShowProperty();
+		Label lbl = new Label("PROPERTY LIST");
 		@Override // Override the handle method
 		public void handle(ActionEvent e) {
 			System.out.println("Menu Item 2_1 Selected");
-			ShowProperty a = new ShowProperty();
+			
+			VBox mainVB =new VBox();
+			FlowPane fp;
 			// controller.SQL.ViewData();
 			// VBox
 			Pane container = new Pane();
 			container.getChildren().clear();
 
-			VBox vb = new VBox();
+			vb.getChildren().clear();
 			vb.setSpacing(50);
 			vb.setAlignment(Pos.TOP_CENTER);
 
-			Label lbl = new Label("PROPERTY LIST");
+			
 			lbl.setFont(Font.font("PROPERTY LIST", FontWeight.BOLD, 24));
-			// lbl.setAlignment(Pos.TOP_CENTER);
 
-			// Buttons
-			/*
-			 * for (int i = 0; i < admin.getPropList().size(); i++) { Text propDetails = new
-			 * Text(admin.getPropList().get(i).getDetails());
-			 * vb.getChildren().add(propDetails); }
-			 */
+			//HBox comboBoxRow = new HBox(50);
+			ContextMenu cMenu = new ContextMenu();
+			MenuItem prompt = new MenuItem("Filter:");
+			prompt.setDisable(true);
+			MenuItem Aptartment = new MenuItem("Aptartment");
+			Aptartment.setOnAction(t -> filter(Aptartment));
+			MenuItem Suite = new MenuItem("Suite");
+			Suite.setOnAction(t -> filter(Suite));
+			MenuItem all = new MenuItem("all");
+			all.setOnAction(t -> filter(all));
+			cMenu.getItems().addAll(prompt,new SeparatorMenuItem(),Aptartment,Suite,all);
+			vb.setOnContextMenuRequested(MouseEvent -> cMenu.show(stage,MouseEvent.getScreenX(),MouseEvent.getScreenY()));
+			ComboBox<String> propTypeFilter = new ComboBox<>();
+			propTypeFilter.getItems().add("Aptartment");
+			propTypeFilter.getItems().add("Suite");
+			propTypeFilter.getItems().add("all");
+			propTypeFilter.setOnAction(t -> {
+				vb.getChildren().clear();
+				//a.show(admin,propTypeFilter.getValue());
+				FlowPane subFP ;
+				subFP = a.show(admin,propTypeFilter.getValue());
+				subFP.prefWidthProperty().bind(stage.widthProperty().subtract(35));
+				
+				vb.getChildren().addAll(lbl,subFP);
+				});
+			
 
-			FlowPane fp = a.show(admin);
+			comboBoxRow.getChildren().add(propTypeFilter);
+			//root.getChildren().add(comboBoxRow);
+
+			fp = a.show(admin,"all");
 			fp.prefWidthProperty().bind(stage.widthProperty().subtract(35));
-
 			vb.getChildren().addAll(lbl, fp);
-			// container.getChildren().addAll(vb,fp);
 
 			contents.setContent(vb);
+		}
+
+		private void filter(MenuItem node) {
+			vb.getChildren().clear();
+			//a.show(admin,propTypeFilter.getValue());
+			FlowPane subFP ;
+			subFP = a.show(admin,node.getText());
+			subFP.prefWidthProperty().bind(stage.widthProperty().subtract(35));
+			
+			vb.getChildren().addAll(lbl,subFP);
 		}
 	}
 
 	class addPropHandler implements EventHandler<ActionEvent> {
 		@Override // Override the handle method
 		public void handle(ActionEvent e) {
-			String id, snum, sname, suburb, imgpath;
+			String id, snum, sname, suburb, imgpath, mntdate;
 			int bednum;
 			GridPane pane = p0;
 			id = ((TextField) pane.getChildren().get(5)).getText();
@@ -292,13 +333,16 @@ System.out.println("exiting"); System.exit(0);
 			imgpath = ((Text) pane.getChildren().get(12)).getText();
 			try {
 				bednum = Integer.parseInt(((TextField) pane.getChildren().get(9)).getText());
-				Apartment apt = new Apartment(id, snum, sname, suburb, bednum, false,imgpath);
+				Apartment apt = new Apartment(id, snum, sname, suburb, bednum, false, imgpath);
 				System.out.println(id + " " + snum + " " + sname + " " + suburb + " " + bednum + " " + imgpath);
 				SQL.insertData(apt);
-			} catch (ClassCastException e2) {
-				bednum = Integer.parseInt(((Text) pane.getChildren().get(9)).getText());
-				Suite suite = new Suite(id, snum, sname, suburb, false,imgpath);
-				System.out.println("SUTIE "+id + " " + snum + " " + sname + " " + suburb + " " + bednum + " " + imgpath);
+			} catch (NumberFormatException e2) {
+				bednum = 3;
+				mntdate = ((TextField) pane.getChildren().get(9)).getText();
+				Suite suite = new Suite(id, snum, sname, suburb, false, imgpath, new DateTime(mntdate));
+				suite.setMntDate(new DateTime(mntdate));
+				System.out.println(
+						"SUTIE " + id + " " + snum + " " + sname + " " + suburb + " " + bednum + " " + imgpath);
 				SQL.insertData(suite);
 			}
 
@@ -310,8 +354,8 @@ System.out.println("exiting"); System.exit(0);
 		@Override
 		public void handle(ActionEvent event) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
 }

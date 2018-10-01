@@ -9,7 +9,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+
+import customException.NoDataException;
 import model.Apartment;
+import model.DateTime;
 import model.Property;
 import model.Record;
 
@@ -18,7 +21,7 @@ public class SQL {
 	final static String dbPath = "jdbc:hsqldb:file:database/RENTAL_PROPERTY";
 	final static String dbPath1 = "jdbc:hsqldb:file:database/RENTAL_RECORDS";
 
-	public static ArrayList<String> ViewData() {
+	public static ArrayList<String> ViewData(){
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet result = null;
@@ -44,7 +47,39 @@ public class SQL {
 //						+ result.getString(4) + "-" + result.getString(5) + "-" + result.getString(6)+ "-" + result.getString(7));
 			}
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			new NoDataException();
+		}
+		return s1;
+	}
+
+	public static ArrayList<String> ViewData(String type){
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet result = null;
+		ArrayList<String> s1 = new ArrayList<>();
+
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(dbPath, "SA", "");
+			stmt = con.createStatement();
+			if (type.equals("Aptartment")) {
+				result = stmt.executeQuery("SELECT * FROM PROPERTY WHERE isapt = true");
+			} else {
+				result = stmt.executeQuery("SELECT * FROM PROPERTY WHERE isapt = false");
+			}
+			ResultSetMetaData resultSetMetaData = result.getMetaData();
+
+			while (result.next()) {
+				String string = " ";
+				for (int i=1; i<= resultSetMetaData.getColumnCount();i++) {
+					string = string +"-"+result.getString(i);
+					
+				}
+				System.out.println(string);
+				s1.add(string);
+			}
+		} catch (Exception e) {
+			new NoDataException();
 		}
 		return s1;
 	}
@@ -54,6 +89,20 @@ public class SQL {
 		try (Connection con = DriverManager.getConnection(dbPath, "SA", "");
 				PreparedStatement stmt = con.prepareStatement(sql);) {
 			stmt.setBoolean(1, stat);
+			stmt.setString(2, propId);
+			stmt.executeUpdate();
+
+			System.out.println("Database updated successfully ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void update(String propId, DateTime mntDate) {
+		String sql = "UPDATE Property SET mntdate = ? where id = ?";
+		try (Connection con = DriverManager.getConnection(dbPath, "SA", "");
+				PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setString(1, mntDate.toString());
 			stmt.setString(2, propId);
 			stmt.executeUpdate();
 
@@ -169,7 +218,7 @@ public class SQL {
 					string = string +"/"+result.getString(i);
 					
 				}
-				System.out.println(string);
+				//System.out.println(string);
 				s1.add(string);
 			}
 		} catch (Exception e) {
@@ -178,4 +227,19 @@ public class SQL {
 		return s1;
 	}
 
+	public static void updateRecords(String propId, DateTime returnDate, double fee, double latefee) {
+		String sql = "UPDATE RECORDS r SET r.returnDate = ? , r.rentfee = ? , r.latefee = ? where r.id = ?";
+		try (Connection con = DriverManager.getConnection(dbPath1, "SA", "");
+				PreparedStatement stmt = con.prepareStatement(sql);) {
+			stmt.setString(1, Utility.convertDate(returnDate));
+			stmt.setDouble(2, fee);
+			stmt.setDouble(3, latefee);
+			stmt.setString(4, propId);
+			stmt.executeUpdate();
+
+			System.out.println("Database updated successfully ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

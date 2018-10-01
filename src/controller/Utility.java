@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.xml.bind.ParseConversionEvent;
 
+import customException.DateTimeFormatException;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.DateTime;
@@ -62,7 +64,8 @@ public class Utility {
 			if (isApt) {
 				target.addProp(id, snum, sname, suburb, bednum, isRented,imgpath);
 			}else {
-				target.addProp(id, snum, sname, suburb, isRented,imgpath);
+				String mntdate = propInfo[9];
+				target.addProp(id, snum, sname, suburb, isRented,imgpath,new DateTime(mntdate));
 			}
 			
 			
@@ -78,11 +81,10 @@ public class Utility {
 		return sqlDate;
 	}
 
-	public static DateTime reverseDate(String date) {
+	public static DateTime reverseDate(String date){
 		String sqlDate;
 		sqlDate=date;
 		String[] dateArray = sqlDate.split("-");
-		//sqlDate=dateArray[2]+"/"+dateArray[1]+"/"+dateArray[0];
 		DateTime recdate = new DateTime(Integer.parseInt(dateArray[2]),Integer.parseInt(dateArray[1]),Integer.parseInt(dateArray[0]));
 		return recdate;
 		

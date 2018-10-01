@@ -14,6 +14,15 @@ public class DateTime
 		time = System.currentTimeMillis();
 	}
 	
+	public DateTime(String date)
+	{
+		String a[] = date.split("/");
+		int d = Integer.parseInt(a[0]);
+		int m = Integer.parseInt(a[1]);
+		int y = Integer.parseInt(a[2]);
+		setDate(d, m, y);
+	}
+	
 	public DateTime(int setClockForwardInDays)
 	{
 		advance = ((setClockForwardInDays * 24L + 0) * 60L) * 60000L;
